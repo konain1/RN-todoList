@@ -8,7 +8,8 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  View
+  View,
+  SafeAreaView
 } from 'react-native'
 
 import GoalItems from './components/GoalItems';
@@ -18,10 +19,10 @@ import GoalInput from './components/GoalInput'
 
 export default function App () {
   const [enteredText, setEnteredText] = useState('')
-    const [goalLists, setGoalLists] = useState([])
+  const [goalLists, setGoalLists] = useState([])
+  const [showModal,setShowModal]=useState(false)
   
-
-
+  
     const handleEnterText = text => {
       setEnteredText(text)
     }
@@ -35,6 +36,7 @@ export default function App () {
         { text: enteredText, id: Math.random().toString() }
       ])
       setEnteredText('')
+      setShowModal(false)
     }
     const handlerDeleteItem = (id)=>{
 
@@ -44,11 +46,25 @@ export default function App () {
      
     }
 
+    const handleShowModal=()=>{
+      setShowModal(true)
+     
+      console.log('pressed')
+    }
+    const handleShowModalCancel =()=>{
+      setShowModal(false)
+    }
 
   return (
-    <View style={styles.mainContainer}>
-     
-      <GoalInput handleEnterText={handleEnterText} handleGoalLists={handleGoalLists} enteredText={enteredText}/>
+    <SafeAreaView style={styles.mainContainer}>
+    <View style={styles.setgoal}>
+
+     <Button  title='set goals' onPress={handleShowModal} />
+    </View>
+  
+      <GoalInput onCancelModal={handleShowModalCancel} showModal={showModal} handleEnterText={handleEnterText} handleGoalLists={handleGoalLists} enteredText={enteredText}/>
+
+   
       <View style={styles.goalContainer}>
         <Text style={{ padding: 10 }}>Goal lists....</Text>
 
@@ -56,27 +72,28 @@ export default function App () {
           data={goalLists}
           renderItem={itemData => (
             <GoalItems  id={itemData.item.id} handlerDeleteItem={handlerDeleteItem } text={itemData.item.text} />
-          )}
+          )} 
           keyExtractor={(item,key)=>{return item.id}}
         />
          
         
       </View>
-    </View>
+    </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    marginHorizontal: 5
+    margin:40,
+   alignItems:'center',
   },
  
   goalContainer: {
-    flex: 2,
+    flex: 1,
     backgroundColor: '#dadada',
     borderRadius: 10,
-    marginBottom: 5
+   width:'100%',
   },
   
   addbtn: {
@@ -84,5 +101,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
     fontSize: 100
   },
- 
+setgoal:{
+  margin:20,
+  width:200,
+  alignItems:'center',
+
+}
 })
